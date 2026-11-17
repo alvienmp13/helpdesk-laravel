@@ -1,0 +1,317 @@
+@import 'tailwindcss';
+@import './tickets.css';
+@import './ticket-create.css';
+@import './chat.css';
+@import './auth.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../fonts/inter-latin-variable.woff2') format('woff2');
+}
+
+@theme {
+    --font-sans: 'Inter', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+    --color-portal-blue: #005bce;
+    --color-portal-ink: #071d3f;
+    --color-portal-muted: #617089;
+    --color-portal-surface: #f7f8ff;
+    --color-portal-soft: #eef3ff;
+}
+
+@layer base {
+    .portal-body { @apply bg-portal-surface font-sans text-portal-ink antialiased; margin: 0; font-size: 13px; }
+    .portal-body button, .portal-body a, .portal-body input { -webkit-tap-highlight-color: transparent; }
+    .portal-body button { cursor: pointer; }
+    .portal-body :focus-visible { outline: 2px solid #1266de; outline-offset: 4px; }
+    .portal-body [hidden] { display: none !important; }
+    .portal-body section[id], .portal-body article[id] { scroll-margin-top: 24px; }
+    .portal-body input::placeholder { color: #929bad; }
+    .portal-body input { min-width: 0; }
+}
+
+@layer components {
+    .portal-icon { display: inline-block; flex: none; vertical-align: middle; }
+    .skip-link { @apply fixed left-4 top-4 z-60 rounded-lg bg-white px-4 py-3 text-portal-blue shadow-lg; transform: translateY(-160%); }
+    .skip-link:focus { transform: translateY(0); }
+    .portal-sidebar { @apply fixed inset-y-0 left-0 z-40 flex flex-col; width: 224px; padding: 21px 12px 20px; background: #eef3ff; overflow-y: auto; }
+    .sidebar-brand { @apply flex items-center justify-between; padding: 0 8px; margin-bottom: 28px; }
+    .brand-mark { @apply flex items-center justify-center rounded-[11px] bg-portal-blue text-white; width: 36px; height: 36px; box-shadow: 0 3px 7px #005bce33; }
+    .sidebar-create { @apply flex items-center justify-center gap-2 rounded-lg bg-portal-blue font-semibold text-white; min-height: 33px; font-size: 11px; margin: 0 2px 19px; box-shadow: 0 3px 7px #005bce2b; }
+    .sidebar-create:hover { background: #004faf; }
+    .nav-label { @apply uppercase text-portal-muted; font-size: 9px; letter-spacing: .025em; margin: 0 8px 8px; }
+    .sidebar-nav { @apply flex flex-col gap-1; }
+    .nav-item { @apply flex w-full items-center gap-3 rounded-lg text-left; min-height: 35px; padding: 8px 12px; font-size: 11px; color: #414b5c; transition: background .15s, color .15s; }
+    .nav-item:hover { background: #e0e9ff; color: #005bce; }
+    .nav-item.is-active { background: #216dee; color: white; font-weight: 600; }
+    .nav-ai-badge { margin-left: auto; border-radius: 5px; padding: 1px 6px; background: #74f2bf; color: #04755b; font-size: 9px; line-height: 1.4; }
+    .sidebar-bottom { margin-top: auto; padding-top: 40px; }
+    .nav-logout { color: #ed3439; }
+    .nav-logout:hover { color: #be1c25; background: #ffeded; }
+    .portal-body .sidebar-close, .portal-body .mobile-menu { display: none; }
+    .portal-workspace { margin-left: 224px; min-height: 100dvh; }
+    .portal-topbar { @apply flex items-center justify-between gap-5; height: 56px; padding: 0 24px; }
+    .topbar-search { @apply flex min-w-0 items-center gap-2 rounded-full bg-white text-slate-400; flex: 1; max-width: 500px; height: 30px; padding: 0 13px; }
+    .topbar-search input { @apply w-full border-0 bg-transparent; font-size: 11px; outline: none; }
+    .topbar-search:focus-within { box-shadow: 0 0 0 2px #a8c7fa; }
+    .topbar-actions { @apply flex shrink-0 items-center gap-3; }
+    .icon-button { @apply inline-flex shrink-0 items-center justify-center rounded-full; width: 32px; height: 32px; color: #7c8ba4; background: #e9efff; }
+    .icon-button:hover { color: #005bce; background: #dce7ff; }
+    .notification-button { position: relative; }
+    .notification-dot { position: absolute; top: 5px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: #ff5067; border: 1px solid #e9efff; }
+    .topbar-divider { height: 26px; width: 1px; background: #e7ebf4; margin: 0 7px; }
+    .profile-button { @apply flex items-center gap-2.5 text-left; }
+    .profile-avatar { @apply flex items-center justify-center rounded-full bg-portal-blue text-white; width: 29px; height: 29px; box-shadow: 0 0 0 2px #dbe9ff; }
+    .profile-copy strong { display: block; font-size: 10px; line-height: 1.35; font-weight: 600; }
+    .profile-copy > span { display: block; font-size: 8px; line-height: 1.4; color: #6a7489; }
+    .notification-panel { @apply absolute right-0 z-50 rounded-xl border border-slate-100 bg-white p-4 shadow-xl; top: 44px; width: 310px; }
+    .notification-panel a { @apply block rounded-lg p-3; background: #f3f6ff; margin-top: 8px; }
+    .notification-panel a:hover { background: #e8efff; }
+    .notification-panel strong { display: block; font-size: 11px; font-weight: 500; }
+    .notification-panel a span { display: block; font-size: 10px; color: #617089; margin-top: 5px; }
+    .dashboard-content { padding: 0 24px 42px; max-width: 1540px; margin: 0 auto; }
+    .welcome-section { @apply flex items-center justify-between gap-5; margin: 1px 0 22px; }
+    .welcome-copy { max-width: 590px; }
+    .welcome-copy h1 { font-size: 27px; font-weight: 600; letter-spacing: -.95px; line-height: 1.3; }
+    .welcome-wave { display: inline-block; font-size: 22px; margin-left: 3px; vertical-align: 2px; }
+    .welcome-copy p { color: #364c71; font-size: 12px; line-height: 1.55; margin-top: 5px; max-width: 520px; }
+    .welcome-status { @apply flex shrink-0 items-center gap-2; }
+    .system-status, .working-hours { @apply inline-flex items-center gap-2 rounded-full; font-size: 10px; line-height: 1.25; min-height: 39px; padding: 6px 11px; }
+    .system-status { background: #70f2bf; color: #00644e; width: 151px; }
+    .status-dot { @apply inline-block shrink-0 rounded-full; width: 7px; height: 7px; background: currentColor; }
+    .working-hours { background: #dce8ff; color: #06458e; width: 171px; }
+    .working-hours .portal-icon { color: #0969e8; }
+    .service-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .service-card { @apply flex flex-col rounded-xl bg-white; padding: 21px; min-height: 230px; border: 1px solid #f0f3fc; }
+    .service-icon { @apply inline-flex items-center justify-center rounded-[10px]; width: 42px; height: 42px; background: #dce7ff; color: #005bce; }
+    .service-badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 9px; line-height: 1.4; background: #dce7ff; color: #254a86; white-space: nowrap; }
+    .service-card h2 { font-size: 16px; font-weight: 500; letter-spacing: -.4px; line-height: 1.4; }
+    .service-card > p { font-size: 11px; line-height: 1.75; color: #536782; margin-top: 5px; margin-bottom: 15px; max-width: 320px; }
+    .service-action { @apply inline-flex items-center justify-center gap-2 self-start rounded-md; margin-top: auto; padding: 9px 14px; font-size: 11px; line-height: 1.25; background: #e7efff; color: #032452; transition: background .15s; }
+    .service-action:hover { background: #d2e1ff; }
+    .service-primary { background: linear-gradient(120deg, #0056bf 0%, #0960d3 46%, #337de8 100%); border-color: #337de8; color: white; box-shadow: 0 3px 5px #12376e26; }
+    .service-primary .service-icon { background: #ffffff2b; color: #d5eaff; }
+    .service-primary .service-badge { background: #ffffff38; color: white; font-weight: 700; }
+    .service-primary h2 { font-weight: 650; }
+    .service-primary > p { color: #eff5ff; }
+    .service-primary .service-action { background: white; color: #005bce; }
+    .service-primary .service-action:hover { background: #ecf3ff; }
+    .service-mint .service-icon, .service-mint .service-badge { background: #72f3be; color: #007b64; }
+    .service-mint .service-action { background: #dce8ff; }
+    .ticket-summary { margin-top: 28px; }
+    .section-heading { @apply flex items-center justify-between gap-3; margin-bottom: 14px; }
+    .section-heading h2, .urgent-panel h2, .ai-heading h2 { font-size: 16px; font-weight: 500; letter-spacing: -.4px; line-height: 1.4; }
+    .account-badge { font-size: 9px; color: #4c6e9b; background: #e3ecff; padding: 1px 6px; border-radius: 5px; }
+    .text-link { @apply inline-flex items-center gap-1 text-portal-blue; font-size: 10px; white-space: nowrap; }
+    .text-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .stat-card { @apply rounded-xl bg-white; border: 1px solid #f0f3fc; padding: 17px; min-height: 121px; }
+    .stat-card h3 { font-size: 9px; font-weight: 400; text-transform: uppercase; letter-spacing: .15px; }
+    .stat-icon { @apply flex shrink-0 items-center justify-center rounded-md; width: 29px; height: 29px; background: #e6edff; }
+    .stat-value { font-size: 27px; line-height: 1.15; font-weight: 500; margin-top: 11px; letter-spacing: -.5px; }
+    .stat-description { @apply flex items-center gap-1.5; font-size: 9px; margin-top: 5px; line-height: 1.5; color: #536782; }
+    .stat-description .status-dot { width: 6px; height: 6px; color: #005bce; }
+    .stat-slate h3, .stat-slate .stat-icon { color: #526784; }
+    .stat-blue h3, .stat-blue .stat-value, .stat-blue .stat-icon { color: #005bce; }
+    .stat-blue .stat-icon { background: #dbe3ff; }
+    .stat-amber h3, .stat-amber .stat-value, .stat-amber .stat-description { color: #976008; }
+    .stat-amber .stat-icon { color: #915000; background: #ffe1b4; }
+    .stat-mint h3, .stat-mint .stat-value { color: #00816f; }
+    .stat-mint .stat-icon { color: #008269; background: #6af4bb; }
+    .dashboard-detail-grid { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(250px, 1fr); gap: 28px; align-items: start; margin-top: 28px; }
+    .active-heading { min-height: 39px; }
+    .active-heading p { font-size: 10px; line-height: 1.5; color: #566b8a; }
+    .portal-badge { @apply inline-flex items-center gap-1 rounded-full; padding: 2px 7px; font-size: 8px; line-height: 1.35; white-space: nowrap; }
+    .portal-badge .status-dot { width: 5px; height: 5px; }
+    .badge-blue { color: #0055c0; background: #dce7ff; }
+    .badge-amber { color: #a36007; background: #ffdfae; }
+    .badge-subtle { color: #43679b; background: #e6eeff; border-radius: 4px; }
+    .ticket-card { @apply rounded-xl bg-white; padding: 17px; border: 1px solid #f0f2fa; box-shadow: 0 1px 1px #18294d03; }
+    .ticket-meta { @apply flex flex-wrap items-center justify-between gap-2; }
+    .ticket-number { font-size: 11px; line-height: 1.4; padding: 3px 8px; background: #e5edff; border-radius: 4px; font-weight: 600; letter-spacing: .15px; }
+    .ticket-time { font-size: 8px; color: #778297; white-space: nowrap; }
+    .ticket-card h3 { font-size: 16px; line-height: 1.45; font-weight: 500; letter-spacing: -.4px; margin-top: 16px; }
+    .ticket-description { font-size: 11px; color: #617089; line-height: 1.55; margin: 6px 0 13px; }
+    .ticket-assignee { @apply flex flex-wrap items-center justify-between gap-3 rounded-lg bg-portal-soft; padding: 10px 12px; }
+    .technician-avatar { @apply inline-flex shrink-0 items-center justify-center rounded-full bg-portal-blue font-semibold text-white; width: 32px; height: 32px; font-size: 12px; }
+    .technician-name { font-size: 11px; }
+    .technician-role { font-size: 8px; background: #dae6ff; color: #4e74ae; padding: 1px 4px; border-radius: 3px; }
+    .technician-caption { font-size: 8px; color: #71829b; }
+    .ticket-assignee-actions { @apply flex items-center gap-3; }
+    .response-estimate { @apply inline-flex items-center gap-1.5 text-portal-blue; font-size: 9px; white-space: nowrap; }
+    .ticket-detail-button { background: white; padding: 6px 12px; border-radius: 5px; font-size: 10px; }
+    .ticket-detail-button:hover { color: #005bce; box-shadow: 0 0 0 1px #bfd6ff; }
+    .ticket-note { @apply flex items-center gap-2.5 rounded-lg; padding: 12px; background: #fff5e9; }
+    .note-icon { color: #986007; align-self: flex-start; }
+    .note-title { font-size: 10px; font-weight: 500; margin-bottom: 4px; }
+    .note-text { font-size: 10px; color: #7b756d; line-height: 1.45; }
+    .ticket-response-button { @apply shrink-0 rounded-lg font-semibold text-white; background: #905600; font-size: 10px; padding: 8px 13px; }
+    .ticket-response-button:hover { background: #734400; }
+    .registered-devices { @apply rounded-xl bg-white; margin-top: 20px; padding: 21px; border: 1px solid #f0f2fa; }
+    .eyebrow { font-size: 10px; font-weight: 400; letter-spacing: .3px; text-transform: uppercase; color: #526784; }
+    .devices-grid { @apply grid grid-cols-2 gap-3.5; margin-top: 13px; }
+    .device-card { @apply flex items-center gap-3 rounded-lg bg-portal-soft; padding: 11px; }
+    .device-icon { @apply inline-flex shrink-0 items-center justify-center rounded-md; width: 34px; height: 34px; background: #e5edff; }
+    .device-blue { color: #0064db; }
+    .device-mint { color: #00857f; }
+    .device-card h3 { font-size: 10px; font-weight: 500; line-height: 1.5; }
+    .device-card p { color: #6c80a1; font-size: 8px; line-height: 1.5; }
+    .support-column { @apply flex min-w-0 flex-col gap-5; }
+    .ai-panel, .urgent-panel { @apply rounded-xl bg-white; padding: 21px; border: 1px solid #f0f2fa; border-bottom-color: #e2e7f2; }
+    .ai-heading { @apply flex items-center gap-2; }
+    .ai-icon { @apply inline-flex shrink-0 items-center justify-center rounded-md; background: #e0e7ff; color: #005bce; width: 28px; height: 28px; }
+    .ai-heading h2 { font-size: 15px; white-space: nowrap; letter-spacing: -.55px; }
+    .ai-heading p { font-size: 9px; line-height: 1.4; color: #2f5891; }
+    .ai-bolt { margin-left: auto; color: #5b79a7; }
+    .ai-description { font-size: 11px; color: #617089; line-height: 1.5; margin: 15px 0 13px; }
+    .ai-input { @apply flex items-center gap-1 rounded-lg bg-portal-soft; padding: 0 10px 0 13px; min-height: 34px; }
+    .ai-input:focus-within { box-shadow: 0 0 0 2px #b6d0ff; }
+    .ai-input input { background: transparent; width: 100%; font-size: 10px; outline: none; }
+    .ai-input button { @apply inline-flex shrink-0 items-center justify-center text-portal-blue; width: 25px; height: 32px; }
+    .prompt-label { font-size: 9px; text-transform: uppercase; letter-spacing: .25px; color: #617089; margin: 15px 0 9px; }
+    .prompt-button { @apply flex w-full items-center gap-2 rounded-lg bg-portal-soft text-left; padding: 9px 10px; min-height: 33px; font-size: 10px; }
+    .prompt-button:hover { background: #e0eaff; }
+    .prompt-button > span { flex: 1; }
+    .prompt-button > .portal-icon:first-child { color: #005bce; }
+    .prompt-password > .portal-icon:first-child { color: #bd7403; }
+    .prompt-software > .portal-icon:first-child { color: #00a4a7; }
+    .prompt-button > .portal-icon:last-child { color: #7086aa; }
+    .ai-answer { border-left: 2px solid #72dfb6; padding: 10px; margin-top: 12px; font-size: 11px; line-height: 1.65; color: #476282; background: #f2fbf7; border-radius: 4px; }
+    .ai-answer strong { display: block; font-size: 9px; margin-bottom: 4px; text-transform: uppercase; color: #008269; }
+    .urgent-panel > p { font-size: 11px; color: #617089; line-height: 1.5; margin: 12px 0; }
+    .hotline-card { @apply flex w-full items-center gap-2.5 rounded-lg text-left; background: #fff0f1; padding: 10px; }
+    .hotline-icon { @apply flex shrink-0 items-center justify-center rounded-full text-white; width: 29px; height: 29px; background: #d51b2d; }
+    .hotline-card strong { display: block; font-size: 10px; color: #c91a2d; font-weight: 500; }
+    .hotline-card small { display: block; font-size: 9px; color: #9d7f89; line-height: 1.5; }
+    .walk-in-card { @apply flex w-full items-center gap-2 rounded-lg bg-portal-soft text-left; padding: 11px 10px; margin-top: 10px; font-size: 10px; line-height: 1.45; color: #305487; }
+    .walk-in-card > .portal-icon { color: #1168d5; }
+    .open-badge { margin-left: auto; border-radius: 4px; padding: 1px 7px; font-size: 9px; background: #76f5c4; color: #00775f; }
+    .hotline-card:hover { background: #ffe4e7; }
+    .walk-in-card:hover { background: #e0eaff; }
+    .portal-toast { @apply fixed bottom-6 left-1/2 z-60 rounded-xl bg-portal-ink px-5 py-3 text-white shadow-lg; transform: translateX(-50%); max-width: min(480px, calc(100vw - 32px)); width: max-content; font-size: 12px; line-height: 1.7; }
+    .portal-dialog { @apply fixed inset-0 m-auto rounded-2xl border border-slate-100 bg-white p-6 text-portal-ink shadow-2xl; width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); overflow-y: auto; }
+    .portal-dialog::backdrop { background: #0c234670; backdrop-filter: blur(3px); }
+    .dialog-content { font-size: 13px; line-height: 1.8; color: #526784; margin-top: 20px; overflow-wrap: anywhere; }
+    .dialog-content p + p { margin-top: 12px; }
+    .dialog-content article { background: #f1f5ff; border-radius: 8px; padding: 14px; margin-top: 12px; }
+    .dialog-content h3 { font-weight: 600; color: #17355d; margin-bottom: 5px; }
+    .primary-button { @apply rounded-lg bg-portal-blue px-5 py-2.5 text-xs font-medium text-white; }
+    .primary-button:hover { background: #004faf; }
+}
+
+/* Keep the reference's compact proportions on regular desktop screens. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .welcome-section { gap: 12px; }
+    .welcome-copy h1 { font-size: 25px; }
+    .welcome-status { gap: 8px; }
+    .system-status { width: 148px; }
+    .working-hours { width: 168px; }
+    .welcome-copy p { font-size: 12px; }
+    .service-card { padding: 20px; }
+    .dashboard-detail-grid { gap: 26px; }
+    .ticket-assignee { gap: 9px; padding: 10px; }
+    .ticket-assignee-actions { gap: 10px; }
+    .response-estimate { font-size: 9px; }
+}
+
+@media (min-width: 1024px) and (max-width: 1119px) {
+    .portal-sidebar { width: 208px; }
+    .portal-workspace { margin-left: 208px; }
+    .welcome-section { align-items: flex-start; flex-direction: column; gap: 12px; }
+    .welcome-copy { max-width: none; }
+    .welcome-status br { display: none; }
+    .system-status, .working-hours { width: auto; min-height: 30px; }
+    .service-card { padding: 17px; }
+    .service-card h2 { font-size: 15px; }
+    .dashboard-detail-grid { grid-template-columns: minmax(0, 1fr) 250px; gap: 20px; }
+    .ticket-assignee-actions { width: 100%; justify-content: space-between; }
+}
+
+@media (max-width: 1023px) {
+    .portal-sidebar { width: 260px; transform: translateX(-100%); transition: transform .2s ease; }
+    .portal-sidebar.is-open { transform: translateX(0); }
+    .sidebar-close, .mobile-menu { display: inline-flex !important; }
+    .sidebar-brand { padding-right: 0; }
+    .sidebar-create, .nav-item { min-height: 44px; font-size: 12px; }
+    .sidebar-backdrop { position: fixed; inset: 0; z-index: 35; background: #14284b70; backdrop-filter: blur(2px); }
+    .portal-body.navigation-open { overflow: hidden; }
+    .portal-workspace { margin-left: 0; }
+    .portal-topbar { height: 64px; gap: 14px; }
+    .topbar-search { max-width: none; height: 35px; }
+    .welcome-copy h1 { font-size: 25px; }
+    .welcome-status { flex-direction: column; align-items: stretch; }
+    .system-status, .working-hours { width: auto; min-height: 29px; font-size: 9px; }
+    .system-status br { display: none; }
+    .dashboard-detail-grid { grid-template-columns: minmax(0, 1fr) 255px; gap: 20px; }
+    .ticket-assignee-actions { flex-wrap: wrap; }
+    .ticket-note { flex-wrap: wrap; }
+    .ticket-response-button { margin-left: 28px; }
+    .devices-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 767px) {
+    .portal-topbar { padding: 0 16px; gap: 10px; }
+    .topbar-actions { gap: 9px; }
+    .topbar-divider, .profile-copy, .help-button { display: none; }
+    .topbar-search { padding: 0 10px; }
+    .topbar-search input { font-size: 11px; }
+    .notification-panel { position: fixed; right: 16px; top: 59px; max-width: calc(100vw - 32px); }
+    .dashboard-content { padding: 6px 16px 28px; }
+    .welcome-section { display: block; margin-bottom: 20px; }
+    .welcome-copy h1 { font-size: 24px; line-height: 1.4; letter-spacing: -.8px; }
+    .welcome-wave { font-size: 21px; }
+    .welcome-copy p { font-size: 12px; max-width: 460px; margin-top: 7px; }
+    .welcome-status { flex-direction: row; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .service-grid { grid-template-columns: 1fr; gap: 12px; }
+    .service-card { min-height: 210px; padding: 20px; }
+    .service-card h2 { font-size: 17px; }
+    .service-card > p { font-size: 12px; max-width: none; }
+    .service-action { min-height: 39px; font-size: 12px; }
+    .ticket-summary { margin-top: 24px; }
+    .section-heading { align-items: flex-start; }
+    .section-heading h2 { font-size: 16px; }
+    .summary-heading { align-items: center; }
+    .summary-heading > div { gap: 4px; }
+    .summary-heading h2 { width: 100%; }
+    .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .stat-card { padding: 15px; min-height: 124px; }
+    .stat-card h3 { font-size: 9px; }
+    .stat-description { font-size: 9px; }
+    .dashboard-detail-grid { grid-template-columns: 1fr; gap: 20px; margin-top: 24px; }
+    .active-heading p { max-width: 255px; font-size: 10px; }
+    .active-heading > .portal-badge { margin-top: 4px; flex-shrink: 0; }
+    .ticket-card { padding: 16px; }
+    .ticket-card h3 { font-size: 16px; margin-top: 13px; }
+    .ticket-description { font-size: 12px; line-height: 1.65; }
+    .ticket-assignee { gap: 13px; padding: 12px; }
+    .ticket-assignee-actions { width: 100%; justify-content: space-between; }
+    .ticket-detail-button, .ticket-response-button { min-height: 36px; }
+    .ticket-note { gap: 8px; align-items: flex-start; padding: 12px; }
+    .note-title, .note-text { font-size: 11px; }
+    .ticket-note > div { flex-basis: calc(100% - 30px); }
+    .registered-devices { padding: 18px; margin-top: 16px; }
+    .devices-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .device-card { flex-wrap: wrap; gap: 7px; }
+    .support-column { gap: 16px; }
+    .ai-panel, .urgent-panel { padding: 20px; }
+    .ai-heading h2 { font-size: 17px; }
+    .ai-description, .urgent-panel > p { font-size: 12px; }
+    .ai-input { min-height: 44px; }
+    .ai-input input { font-size: 12px; }
+    .ai-input button { min-width: 32px; height: 42px; }
+    .prompt-button { min-height: 44px; font-size: 12px; }
+    .hotline-card, .walk-in-card { min-height: 56px; }
+    .hotline-card strong, .walk-in-card { font-size: 12px; }
+    .hotline-card small { font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .portal-body *, .portal-body *::before, .portal-body *::after { transition: none !important; scroll-behavior: auto !important; }
+}
